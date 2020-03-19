@@ -63,8 +63,8 @@ if [ ! -e "$FIRST_RUN_PATH" ]; then
 
     echo "> > Determining AWS region..."
     AWS_REGION="eu-west-2"
-    if [ "$DEPLOYMENT_GROUP_NAME" == "redirect-dev" ]; then
-        AWS_REGION="eu-west-1"
+    if [ "$DEPLOYMENT_GROUP_NAME" == "redirect-h2h-prod" ]; then
+        AWS_REGION="eu-west-2"
     fi
 
     echo "> > Determining secrets bucket name..."
@@ -80,7 +80,7 @@ if [ ! -e "$FIRST_RUN_PATH" ]; then
     sudo yum remove -y jq
 
     echo "> > Syncing crontab tasks..."
-    sudo aws --region "$AWS_REGION" s3 sync s3://$SSM_SECRETS_BUCKET_NAME/redirect/cron ~ec2-user/cron
+    sudo aws --region "$AWS_REGION" s3 sync s3://$SSM_SECRETS_BUCKET_NAME/redirect-h2h/cron ~ec2-user/cron
 
     echo "> > Configuring cron..."
     sudo chown root:root ~ec2-user/cron/*.cron
@@ -119,7 +119,7 @@ if [ $? -eq 0 ]; then
 
     echo "> > Copying httpd.conf to shared volume..."
     if [ ! -f "$HTTPD_CONF_PATH" ]; then
-        sudo aws --region "$AWS_REGION" s3 cp s3://$SSM_SECRETS_BUCKET_NAME/redirect/config/httpd.conf "$HTTPD_CONF_PATH"
+        sudo aws --region "$AWS_REGION" s3 cp s3://$SSM_SECRETS_BUCKET_NAME/redirect-h2h/config/httpd.conf "$HTTPD_CONF_PATH"
         sudo chown root:root "$HTTPD_CONF_PATH"
     fi
 
